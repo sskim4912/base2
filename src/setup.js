@@ -1,0 +1,16 @@
+const escape = value => String(value??'미설정').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+export function setupPage(env){
+  const rows=[
+    ['wrangler.jsonc → name','새 Worker 이름으로 반드시 변경','같은 계정에서 원본 이름을 유지하면 원본 Worker가 업데이트됩니다.'],
+    ['wrangler.jsonc → account_id','배포할 Cloudflare 계정 ID','같은 계정이면 유지합니다. 이메일 주소가 아닙니다.'],
+    ['GCP_PROJECT_ID',env.GCP_PROJECT_ID,'새 GCP 프로젝트 ID로 변경합니다. 기존 프로젝트를 재사용하면 유지합니다.'],
+    ['GCS_BUCKET',env.GCS_BUCKET,'이미지를 저장할 버킷 이름입니다. gs:// 없이 입력합니다. 버킷은 GCP에서 먼저 생성합니다.'],
+    ['VERTEX_MODEL',env.VERTEX_MODEL,'사용할 모델 ID. 같은 모델을 사용할 경우 유지합니다.'],
+    ['VERTEX_LOCATION',env.VERTEX_LOCATION,'모델이 지원하는 리전. 같은 리전이면 유지합니다.'],
+    ['GCP_SERVICE_ACCOUNT_JSON',env.GCP_SERVICE_ACCOUNT_JSON?'이 Worker에 등록됨 · 호출은 별도 확인':'이 Worker에 미등록','새 Worker의 Secret으로 서비스 계정 JSON 전체를 별도 등록합니다. 복제할 때 함께 복사되지 않습니다.'],
+    ['CLOUDFLARE_API_TOKEN','개발 환경 / CI 보안 설정','배포 계정의 Workers 수정 권한을 가진 토큰입니다. Worker 변수에 넣지 않습니다.'],
+    ['CLOUDFLARE_ACCOUNT_ID','개발 환경 / CI 환경변수','설정되어 있다면 wrangler.jsonc의 account_id와 일치해야 합니다.'],
+    ['package.json → name / 화면 제목','선택 변경','앱 이름과 화면 제목(src/page.js), README 배포 주소를 새 프로젝트에 맞춥니다.']
+  ];
+  return `<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>복제 후 설정 안내</title><style>body{font-family:system-ui,sans-serif;background:#f4f6fb;color:#18243b;margin:0}main{max-width:1100px;margin:40px auto;padding:24px}section{background:white;padding:24px;border-radius:14px;margin:20px 0}table{border-collapse:collapse;width:100%;min-width:650px}td,th{text-align:left;padding:14px;border-bottom:1px solid #dce3ee;vertical-align:top;overflow-wrap:anywhere}code{font-size:13px}p,li{line-height:1.8}a{color:#285cdb}.scroll{overflow:auto}</style></head><body><main><a href="/">← 이미지 작업실</a><h1>복제 후 설정 안내</h1><p>이 저장소를 새 프로젝트로 사용할 때 변경할 값입니다. 이 화면은 안내용이며 설정을 직접 변경하지 않습니다. 아래 GCP 값은 현재 배포된 Worker의 설정입니다.</p><section><h2>먼저 확인할 두 가지</h2><ol><li>첫 배포 전에 <code>wrangler.jsonc</code>의 <code>name</code>을 새 이름으로 변경하세요.</li><li>새 Worker에 <code>GCP_SERVICE_ACCOUNT_JSON</code> Secret을 별도로 등록하세요. GitHub 복제로 인증 정보가 복사되지 않습니다.</li></ol></section><section><h2>변경할 값과 입력 위치</h2><div class="scroll"><table><thead><tr><th>설정 / 위치</th><th>현재 값 또는 입력값</th><th>수정 기준</th></tr></thead><tbody>${rows.map(row=>'<tr>'+row.map((cell,i)=>'<td>'+(i===0?'<code>'+escape(cell)+'</code>':escape(cell))+'</td>').join('')+'</tr>').join('')}</tbody></table></div></section><section><h2>새 프로젝트 시작 순서</h2><ol><li>저장소 복제 후 위 값을 수정합니다.</li><li>GCP 결제·API 활성화와 서비스 계정 권한을 준비하고 저장할 버킷을 생성하거나 선택합니다.</li><li><code>npm ci</code> → <code>npm run build</code> → <code>npm run deploy</code>로 새 Worker를 배포합니다.</li><li>Cloudflare → 새 Worker → Settings → Variables and Secrets에서 유형 <strong>Secret</strong>, 이름 <code>GCP_SERVICE_ACCOUNT_JSON</code>, 값은 서비스 계정 JSON 전체로 등록하고 Deploy합니다.</li><li>새 주소에서 Vertex AI 호출, 이미지 OCR, 버킷 저장과 저장 이미지 열기를 확인합니다.</li></ol><p>관련 API: Vertex AI API, Cloud Vision API, Cloud Storage JSON API. 서비스 계정에는 API 호출과 해당 버킷 객체 생성·조회·삭제 권한이 필요합니다.</p><p>Secret 등록 표시는 인증 성공을 뜻하지 않습니다. 키 내용은 이 화면에 표시하지 않습니다. 호출 확인 키와 R2는 필요하지 않습니다.</p><p>자세한 권한·로컬 개발·자동 배포 안내는 저장소의 <strong>SETUP.md</strong>를 확인하세요. GitHub에 코드를 푸시하는 것만으로 새 Worker의 자동 배포가 연결되지는 않습니다.</p></section></main></body></html>`;
+}

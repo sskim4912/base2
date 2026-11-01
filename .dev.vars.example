@@ -1,0 +1,4 @@
+# 로컬 개발 전용. 이 파일을 .dev.vars로 복사하세요.
+# 아래 자리표시자를 JSON 파일 전체로 교체하세요.
+# JSON은 한 줄로 넣고 private_key 안의 줄바꿈은 \n으로 유지합니다.
+GCP_SERVICE_ACCOUNT_JSON='REPLACE_WITH_FULL_SERVICE_ACCOUNT_JSON'

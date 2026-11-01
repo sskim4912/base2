@@ -1,0 +1,13 @@
+{
+  "name": "api-for-anythingllm-check",
+  "main": "src/worker.js",
+  "compatibility_date": "2026-10-30",
+  "workers_dev": true,
+  "vars": {
+    "GCP_PROJECT_ID": "api-for-anythingllm-1",
+    "GCS_BUCKET": "bucket_2611__1",
+    "VERTEX_MODEL": "gemini-3.8-flash",
+    "VERTEX_LOCATION": "global"
+  },
+  "account_id": "fce63723d5997d0f4c2b904404cf0592"
+}
